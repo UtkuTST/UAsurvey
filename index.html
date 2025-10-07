@@ -71,33 +71,27 @@
   <div id="surveyContainer"></div>
 
   <script>
-    Promise.all([
-      fetch("theme.json").then((r) => r.json()),
-      fetch("hastings.json").then((r) => r.json()),
-    ])
-      .then(([themeJson, surveyJson]) => {
-        // Extract the key theme variables
-        const baseTheme = {
-          themeName: themeJson.themeName || "borderless",
-          colorPalette: themeJson.colorPalette || "light",
-          cssVariables: themeJson.cssVariables || {}
-        };
+    // Load the survey JSON
+    fetch("hastings.json")
+      .then((r) => r.json())
+      .then((surveyJson) => {
+        // Apply a built-in SurveyJS theme with overrides
+        Survey.StylesManager.applyTheme("borderless");
 
-        // Apply theme correctly
-        if (Survey.Theme && Survey.Theme.apply) {
-          Survey.Theme.apply(baseTheme);
-        } else if (Survey.StylesManager && Survey.StylesManager.applyTheme) {
-          Survey.StylesManager.applyTheme(baseTheme);
-        }
+        // Optional: Override specific theme variables dynamically
+        Survey.StylesManager.ThemeColors["borderless"]["--sjs-primary-backcolor"] = "rgba(35,101,200,1)";
+        Survey.StylesManager.ThemeColors["borderless"]["--sjs-secondary-backcolor"] = "rgba(255,152,20,1)";
+        Survey.StylesManager.ThemeColors["borderless"]["--sjs-corner-radius"] = "8px";
+        Survey.StylesManager.applyTheme("borderless");
 
         // Create and render the survey
         const survey = new Survey.Model(surveyJson);
         $("#surveyContainer").Survey({ model: survey });
       })
       .catch((err) => {
-        console.error("Error loading survey or theme:", err);
-        document.getElementById("surveyContainer").innerHTML = `
-          <p style="color:red;text-align:center;">Error loading survey. Check console.</p>`;
+        console.error("Error loading survey:", err);
+        document.getElementById("surveyContainer").innerHTML =
+          "<p style='color:red;text-align:center;'>Error loading survey. Check console.</p>";
       });
   </script>
 </body>
