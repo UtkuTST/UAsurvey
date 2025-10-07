@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hastings Survey</title>
+  <script src="https://unpkg.com/jquery"></script>
+  <script src="https://unpkg.com/survey-jquery@1.10.2/survey.jquery.min.js"></script>
+  <link href="https://unpkg.com/survey-core/defaultV2.min.css" rel="stylesheet"/>
+</head>
+<body>
+  <div id="surveyContainer" style="max-width:800px;margin:auto"></div>
+
+  <script>
+    fetch("hastings.json")
+      .then(response => response.json())
+      .then(surveyJson => {
+        const survey = new Survey.Model(surveyJson);
+        $("#surveyContainer").Survey({ model: survey });
+      });
+  </script>
+</body>
+</html>
