@@ -70,33 +70,33 @@
 <body>
   <div id="surveyContainer"></div>
 
-<script>
-  // Load the JSON directly from your live GitHub Pages URL
-  fetch("https://utkutst.github.io/UAsurvey/hastings.json")
-    .then((r) => {
-      if (!r.ok) throw new Error("Failed to load JSON: " + r.status);
-      return r.json();
-    })
-    .then((surveyJson) => {
-      console.log("Survey loaded:", surveyJson);
+  <script>
+    fetch("https://utkutst.github.io/UAsurvey/hastings.json")
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to load JSON: " + r.status);
+        return r.json();
+      })
+      .then((surveyJson) => {
+        console.log("Survey loaded:", surveyJson);
 
-      // Apply SurveyJS built-in borderless theme
-      Survey.StylesManager.applyTheme("borderless");
-      // Optional: tweak theme colors
-      Survey.StylesManager.ThemeColors["borderless"]["--sjs-primary-backcolor"] = "rgba(35,101,200,1)";
-      Survey.StylesManager.ThemeColors["borderless"]["--sjs-secondary-backcolor"] = "rgba(255,152,20,1)";
-      Survey.StylesManager.ThemeColors["borderless"]["--sjs-corner-radius"] = "8px";
-      Survey.StylesManager.applyTheme("borderless");
+        // ✅ Build a modern theme object (this works on v1.11+)
+        const theme = Survey.Theme.getSurveyTheme("borderless");
+        theme["cssVariables"]["--sjs-primary-backcolor"] = "rgba(35,101,200,1)";
+        theme["cssVariables"]["--sjs-secondary-backcolor"] = "rgba(255,152,20,1)";
+        theme["cssVariables"]["--sjs-corner-radius"] = "8px";
+        theme["cssVariables"]["--sjs-font-family"] = "Open Sans, Segoe UI, Arial, sans-serif";
+        Survey.Theme.apply(theme);
 
-      // Create and render the survey
-      const survey = new Survey.Model(surveyJson);
-      $("#surveyContainer").Survey({ model: survey });
-    })
-    .catch((err) => {
-      console.error("Error loading survey:", err);
-      document.getElementById("surveyContainer").innerHTML =
-        "<p style='color:red;text-align:center;'>Error loading survey. Check console for details.</p>";
-    });
-</script>
+        // Create and render the survey
+        const survey = new Survey.Model(surveyJson);
+        $("#surveyContainer").Survey({ model: survey });
+      })
+      .catch((err) => {
+        console.error("Error loading survey:", err);
+        document.getElementById("surveyContainer").innerHTML =
+          "<p style='color:red;text-align:center;'>Error loading survey. Check console for details.</p>";
+      });
+  </script>
 </body>
 </html>
+
