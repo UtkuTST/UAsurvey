@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hastings Survey</title>
 
-  <!-- Load SurveyJS core -->
-  <script src="https://unpkg.com/jquery"></script>
-  <script src="https://unpkg.com/survey-jquery@1.11.10/survey.jquery.min.js"></script>
+  <!-- Load SurveyJS -->
+  <script src="https://unpkg.com/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://unpkg.com/survey-jquery@1.11.12/survey.jquery.min.js"></script>
   <link href="https://unpkg.com/survey-core/defaultV2.min.css" rel="stylesheet" />
 
   <style>
@@ -26,10 +26,6 @@
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
       margin: auto;
-    }
-
-    .sd-page {
-      padding: 0;
     }
 
     .sd-panel {
@@ -75,27 +71,34 @@
   <div id="surveyContainer"></div>
 
   <script>
-    // Load both JSON files (theme + survey)
     Promise.all([
       fetch("theme.json").then((r) => r.json()),
       fetch("hastings.json").then((r) => r.json()),
     ])
       .then(([themeJson, surveyJson]) => {
-        console.log("Theme loaded:", themeJson);
+        // Extract the key theme variables
+        const baseTheme = {
+          themeName: themeJson.themeName || "borderless",
+          colorPalette: themeJson.colorPalette || "light",
+          cssVariables: themeJson.cssVariables || {}
+        };
 
-        // Apply the custom theme using the correct API
+        // Apply theme correctly
         if (Survey.Theme && Survey.Theme.apply) {
-          Survey.Theme.apply(themeJson);
-        } else {
-          // Fallback for older versions
-          Survey.StylesManager.applyTheme(themeJson);
+          Survey.Theme.apply(baseTheme);
+        } else if (Survey.StylesManager && Survey.StylesManager.applyTheme) {
+          Survey.StylesManager.applyTheme(baseTheme);
         }
 
         // Create and render the survey
         const survey = new Survey.Model(surveyJson);
         $("#surveyContainer").Survey({ model: survey });
       })
-      .catch((err) => console.error("Error loading survey or theme:", err));
+      .catch((err) => {
+        console.error("Error loading survey or theme:", err);
+        document.getElementById("surveyContainer").innerHTML = `
+          <p style="color:red;text-align:center;">Error loading survey. Check console.</p>`;
+      });
   </script>
 </body>
 </html>
