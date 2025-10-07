@@ -12,13 +12,21 @@
   <div id="surveyContainer" style="max-width:800px;margin:auto"></div>
 
   <script>
-    fetch("hastings.json")
-      .then(response => response.json())
-      .then(surveyJson => {
-        const survey = new Survey.Model(surveyJson);
-        $("#surveyContainer").Survey({ model: survey });
-      });
-  </script>
+  // Load both JSON files (theme + survey)
+  Promise.all([
+    fetch("theme.json").then(r => r.json()),
+    fetch("hastings.json").then(r => r.json())
+  ])
+  .then(([themeJson, surveyJson]) => {
+    // Apply theme
+    Survey.StylesManager.applyTheme(themeJson);
+
+    // Create survey
+    const survey = new Survey.Model(surveyJson);
+    $("#surveyContainer").Survey({ model: survey });
+  })
+  .catch(err => console.error("Error loading survey:", err));
+</script>
 </body>
 </html>
 
