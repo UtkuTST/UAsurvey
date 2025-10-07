@@ -72,4 +72,30 @@
 </head>
 
 <body>
-  <div id="surveyContai
+  <div id="surveyContainer"></div>
+
+  <script>
+    // Load both JSON files (theme + survey)
+    Promise.all([
+      fetch("theme.json").then((r) => r.json()),
+      fetch("hastings.json").then((r) => r.json()),
+    ])
+      .then(([themeJson, surveyJson]) => {
+        console.log("Theme loaded:", themeJson);
+
+        // Apply the custom theme using the correct API
+        if (Survey.Theme && Survey.Theme.apply) {
+          Survey.Theme.apply(themeJson);
+        } else {
+          // Fallback for older versions
+          Survey.StylesManager.applyTheme(themeJson);
+        }
+
+        // Create and render the survey
+        const survey = new Survey.Model(surveyJson);
+        $("#surveyContainer").Survey({ model: survey });
+      })
+      .catch((err) => console.error("Error loading survey or theme:", err));
+  </script>
+</body>
+</html>
