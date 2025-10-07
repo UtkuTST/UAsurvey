@@ -70,29 +70,33 @@
 <body>
   <div id="surveyContainer"></div>
 
-  <script>
-    // Load the survey JSON
-    fetch("hastings.json")
-      .then((r) => r.json())
-      .then((surveyJson) => {
-        // Apply a built-in SurveyJS theme with overrides
-        Survey.StylesManager.applyTheme("borderless");
+<script>
+  // Load the JSON directly from your live GitHub Pages URL
+  fetch("https://utkutst.github.io/UAsurvey/hastings.json")
+    .then((r) => {
+      if (!r.ok) throw new Error("Failed to load JSON: " + r.status);
+      return r.json();
+    })
+    .then((surveyJson) => {
+      console.log("Survey loaded:", surveyJson);
 
-        // Optional: Override specific theme variables dynamically
-        Survey.StylesManager.ThemeColors["borderless"]["--sjs-primary-backcolor"] = "rgba(35,101,200,1)";
-        Survey.StylesManager.ThemeColors["borderless"]["--sjs-secondary-backcolor"] = "rgba(255,152,20,1)";
-        Survey.StylesManager.ThemeColors["borderless"]["--sjs-corner-radius"] = "8px";
-        Survey.StylesManager.applyTheme("borderless");
+      // Apply SurveyJS built-in borderless theme
+      Survey.StylesManager.applyTheme("borderless");
+      // Optional: tweak theme colors
+      Survey.StylesManager.ThemeColors["borderless"]["--sjs-primary-backcolor"] = "rgba(35,101,200,1)";
+      Survey.StylesManager.ThemeColors["borderless"]["--sjs-secondary-backcolor"] = "rgba(255,152,20,1)";
+      Survey.StylesManager.ThemeColors["borderless"]["--sjs-corner-radius"] = "8px";
+      Survey.StylesManager.applyTheme("borderless");
 
-        // Create and render the survey
-        const survey = new Survey.Model(surveyJson);
-        $("#surveyContainer").Survey({ model: survey });
-      })
-      .catch((err) => {
-        console.error("Error loading survey:", err);
-        document.getElementById("surveyContainer").innerHTML =
-          "<p style='color:red;text-align:center;'>Error loading survey. Check console.</p>";
-      });
-  </script>
+      // Create and render the survey
+      const survey = new Survey.Model(surveyJson);
+      $("#surveyContainer").Survey({ model: survey });
+    })
+    .catch((err) => {
+      console.error("Error loading survey:", err);
+      document.getElementById("surveyContainer").innerHTML =
+        "<p style='color:red;text-align:center;'>Error loading survey. Check console for details.</p>";
+    });
+</script>
 </body>
 </html>
